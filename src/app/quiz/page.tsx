@@ -2,7 +2,6 @@
 import { Button } from "@/components/ui/button";
 import { useGlobalContext } from "../../../context/globalContext";
 import { IOption, IQuestion, IResponse } from "../../../types/types";
-
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
@@ -79,7 +78,7 @@ function page() {
       questionId: shuffledQuestions[currentIndex].id,
       optionId: option.id,
       isCorrect: option.isCorrect,
-    };
+    };  
 
     setResponses((prev) => {
       // check if the response already exists
@@ -146,7 +145,7 @@ function page() {
     <div className="min-h-screen bg-background text-foreground relative">
       {/* Background Pattern */}
       <div className="absolute inset-0 bg-gradient-to-br from-muted/20 via-background to-muted/20">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(var(--primary)/0.05),transparent)] bg-[radial-gradient(circle_at_70%_80%,rgba(var(--accent)/0.1),transparent)]"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(var(--primary)/0.05),transparent)]"></div>
       </div>
 
       <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 py-4 sm:py-8">
@@ -230,23 +229,20 @@ function page() {
                     : "bg-muted text-muted-foreground cursor-not-allowed"
                 }
               `}
+              disabled={!activeQuestion?.id}
               onClick={() => {
+                // Double check to prevent any potential issues
+                if (!activeQuestion?.id) {
+                  const sound = new Audio("../../../public/sounds/error.mp3");
+                  sound.play();
+                  toast.error("Please select an option to continue");
+                  return;
+                }
+
                 if (currentIndex < shuffledQuestions.length - 1) {
-                  if (activeQuestion?.id) {
-                    handleNextQuestion();
-                  } else {
-                    const sound = new Audio("/sounds/error.mp3");
-                    sound.play();
-                    toast.error("Please select an option to continue");
-                  }
+                  handleNextQuestion();
                 } else {
-                  if (activeQuestion?.id) {
-                    handleFinishQuiz();
-                  } else {
-                    const sound = new Audio("/sounds/error.mp3");
-                    sound.play();
-                    toast.error("Please select an option to continue");
-                  }
+                  handleFinishQuiz();
                 }
               }}
             >

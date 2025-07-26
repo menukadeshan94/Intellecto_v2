@@ -42,9 +42,16 @@ interface ICategoryStats {
   categoryId: string;
   completed: number;
   id: string;
-  lastAttempt: Date;
+  lastAttempt: string | null; // Changed to string to match API response
   userId: string;
   category: ICategory;
 }
 
-export type { ICategory, IQuiz, IQuestion, IOption, IResponse, ICategoryStats };
+interface IUserStats {
+  id: string;
+  clerkId: string | null;
+  role: string;
+  categoryStats: ICategoryStats[];
+}
+
+export type { ICategory, IQuiz, IQuestion, IOption, IResponse, ICategoryStats, IUserStats };

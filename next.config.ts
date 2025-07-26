@@ -11,8 +11,13 @@ const nextConfig: NextConfig = {
     '192.168.0.0/16',    // All 192.168.x.x networks
     '192.168.1.3',
     '10.18.62.59',
-    '10.18.53.120'
+    '10.18.53.120',
+    '172.20.10.2'
   ],
+
+  images:{
+    domains:['img.clerk.com'],
+  }
   
   // Alternative: Allow all local network IPs (less secure but convenient)
   // allowedDevOrigins: ['*'],

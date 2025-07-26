@@ -1,13 +1,11 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+// Enhanced schema.prisma with additional tracking capabilities
 
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+// This is your enhanced Prisma schema file
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
   provider = "prisma-client-js"
   output   = "../src/generated/prisma"
- 
 }
 
 datasource db {
@@ -15,64 +13,135 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 model User {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  clerkId   String?  @unique
-  role      String   @default("user")
+  id            String         @id @default(auto()) @map("_id") @db.ObjectId
+  clerkId       String?        @unique
+  role          String         @default("user")
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
   categoryStats CategoryStat[]
-
+  quizAttempts  QuizAttempt[]
+  achievements  UserAchievement[]
 }
 
 model Category {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  name      String
-  description String?
-  image String?
-  quizzes Quiz[]
-  categoryStats CategoryStat[] //reverse relation to category stats
-
+  id            String         @id @default(auto()) @map("_id") @db.ObjectId
+  name          String
+  description   String?
+  image         String?
+  isActive      Boolean        @default(true)
+  difficulty    String?        @default("beginner") // beginner, intermediate, advanced
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  quizzes       Quiz[]
+  categoryStats CategoryStat[]
+  quizAttempts  QuizAttempt[]
 }
 
 model Quiz {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  title     String
-  description String?
-  image     String?
-  categoryId String @db.ObjectId
-  category Category @relation(fields: [categoryId], references: [id])
-  questions Question[]
-
+  id           String        @id @default(auto()) @map("_id") @db.ObjectId
+  title        String
+  description  String?
+  image        String?
+  isActive     Boolean       @default(true)
+  difficulty   String?       @default("beginner")
+  timeLimit    Int?          // in minutes
+  passingScore Int?          @default(70) // percentage
+  categoryId   String        @db.ObjectId
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  category     Category      @relation(fields: [categoryId], references: [id])
+  questions    Question[]
+  quizAttempts QuizAttempt[]
 }
 
 model Question {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  text      String
-  quizId    String @db.ObjectId
-  difficulty String?
-  quiz      Quiz @relation(fields: [quizId], references: [id], onDelete: Cascade)
-  options   Option[]
-  answer    String
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  text         String
+  quizId       String   @db.ObjectId
+  difficulty   String?
+  points       Int      @default(1)
+  explanation  String?  // explanation for the correct answer
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  quiz         Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  options      Option[]
+  answer       String
 }
 
 model Option {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  text      String
-  isCorrect Boolean
-  questionId String @db.ObjectId
-  question  Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  text       String
+  isCorrect  Boolean
+  questionId String   @db.ObjectId
+  createdAt  DateTime @default(now())
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
 }
 
 model CategoryStat {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  userId    String @db.ObjectId
-  user      User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  categoryId String @db.ObjectId
-  category  Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-  attempts Int @default(0)
-  completed Int @default(0)
+  id           String    @id @default(auto()) @map("_id") @db.ObjectId
+  userId       String    @db.ObjectId
+  categoryId   String    @db.ObjectId
+  attempts     Int       @default(0)
+  completed    Int       @default(0)
   averageScore Float?
-  lastAttempt DateTime?
- 
+  bestScore    Float?
+  totalTime    Int?      @default(0) // total time spent in minutes
+  lastAttempt  DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category     Category  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
   @@unique([userId, categoryId])
+}
+
+// New model for tracking individual quiz attempts
+model QuizAttempt {
+  id           String    @id @default(auto()) @map("_id") @db.ObjectId
+  userId       String    @db.ObjectId
+  quizId       String    @db.ObjectId
+  categoryId   String    @db.ObjectId
+  score        Float?    // percentage score
+  totalQuestions Int
+  correctAnswers Int
+  completed    Boolean   @default(false)
+  timeSpent    Int?      // in seconds
+  startedAt    DateTime  @default(now())
+  completedAt  DateTime?
+  answers      Json?     // store user answers as JSON
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  quiz         Quiz      @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  category     Category  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@index([categoryId, createdAt])
+}
+
+// Achievement system for gamification
+model Achievement {
+  id          String            @id @default(auto()) @map("_id") @db.ObjectId
+  name        String            @unique
+  description String
+  icon        String?
+  type        String            // streak, score, completion, category_master, etc.
+  requirement Json              // flexible requirement structure
+  points      Int               @default(0)
+  isActive    Boolean           @default(true)
+  createdAt   DateTime          @default(now())
+  users       UserAchievement[]
+}
+
+model UserAchievement {
+  id            String      @id @default(auto()) @map("_id") @db.ObjectId
+  userId        String      @db.ObjectId
+  achievementId String      @db.ObjectId
+  unlockedAt    DateTime    @default(now())
+  progress      Json?       // track progress towards achievement
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  achievement   Achievement @relation(fields: [achievementId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, achievementId])
 }
