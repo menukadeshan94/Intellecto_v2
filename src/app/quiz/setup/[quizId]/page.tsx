@@ -27,8 +27,17 @@ export default function Page() {
   useEffect(() => {
     if (!selectedQuiz) {
       router.push("/"); 
+    } else {
+      // Initialize quizSetup with defaults if not already set
+      if (!quizSetup || !quizSetup.difficulty) {
+        setQuizSetup((prev: any) => ({
+          ...prev,
+          questionCount: prev?.questionCount || 1,
+          difficulty: prev?.difficulty || "unspecified"
+        }));
+      }
     }
-  }, [selectedQuiz, router]);
+  }, [selectedQuiz, router, setQuizSetup]);
 
   const handleQuestionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(e.target.value, 10);
@@ -133,7 +142,7 @@ export default function Page() {
               Difficulty
             </Label>
             <Select
-              defaultValue="unspecified"
+              value={quizSetup?.difficulty || "unspecified"}
               onValueChange={(value) => handleDifficultyChange(value)}
             >
               <SelectTrigger id="difficulty">

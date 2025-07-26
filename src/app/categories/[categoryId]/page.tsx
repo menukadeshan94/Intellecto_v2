@@ -42,7 +42,7 @@ async function page({params}: any) {
       }, 
     });
 
-    console.log("quizzes", quizzes)
+    // console.log("quizzes", quizzes)
 
     return (
       <div>

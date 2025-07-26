@@ -28,7 +28,7 @@ export const GlobalContextProvider = ({ children }) =>{
     const [selectedQuiz, setSelectedQuiz] = React.useState(null);
 
     //quiz response
-    const [quizResponse, setQuizResponse] = React.useState([]);
+    const [quizResponses, setQuizResponses] = React.useState([]);
 
     useEffect(()=>{
         if(!isLoaded || !user?.emailAddresses[0]?.emailAddress ) return;
@@ -67,8 +67,8 @@ export const GlobalContextProvider = ({ children }) =>{
             setQuizSetup,
             selectedQuiz,
             setSelectedQuiz,
-            quizResponse,
-            setQuizResponse
+            quizResponses,
+            setQuizResponses
 
             
         }}>

@@ -9,7 +9,7 @@ const nextConfig: NextConfig = {
     '192.168.48.0/24',   // Next.js detected subnet
     '10.0.0.0/8',        // All 10.x.x.x networks
     '192.168.0.0/16',    // All 192.168.x.x networks
-    '192.168.1.4',
+    '192.168.1.3',
     '10.18.62.59',
     '10.18.53.120'
   ],
