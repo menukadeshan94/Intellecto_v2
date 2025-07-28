@@ -9,10 +9,10 @@ interface ExcelRow {
   title: string;
   description?: string;
   question: string;
-  option1: string;
-  option2: string;
-  option3: string;
-  option4: string;
+  option1_A: string;
+  option2_B: string;
+  option3_C: string;
+  option4_D: string;
   correct_answer: 'A' | 'B' | 'C' | 'D';
   explanation?: string;
   [key: string]: any; // Allow additional properties from Excel
@@ -125,9 +125,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Validate Excel structure
+    // Validate Excel structure - Fixed column names
     const firstRow = data[0] as ExcelRow;
-    const requiredColumns = ['title', 'question', 'option1', 'option2', 'option3', 'option4', 'correct_answer'];
+    const requiredColumns = ['title', 'question', 'option1_A', 'option2_B', 'option3_C', 'option4_D', 'correct_answer'];
     const missingColumns = requiredColumns.filter(col => !(col in firstRow));
     
     if (missingColumns.length > 0) {
@@ -140,7 +140,7 @@ export async function POST(request: NextRequest) {
     }
     console.log('✅ Excel structure validated');
 
-    // Group data by quiz title
+    // Group data by quiz title - Fixed property references
     const quizGroups: Record<string, QuizGroup> = data.reduce<Record<string, QuizGroup>>((acc, row) => {
       const rowData = row as ExcelRow;
       const title = rowData.title?.toString().trim();
@@ -158,13 +158,14 @@ export async function POST(request: NextRequest) {
         };
       }
       
+      // Fixed: Use correct property names from ExcelRow interface
       acc[title].questions.push({
         text: rowData.question?.toString() || '',
         options: [
-          { text: rowData.option1?.toString() || '', isCorrect: rowData.correct_answer === 'A' },
-          { text: rowData.option2?.toString() || '', isCorrect: rowData.correct_answer === 'B' },
-          { text: rowData.option3?.toString() || '', isCorrect: rowData.correct_answer === 'C' },
-          { text: rowData.option4?.toString() || '', isCorrect: rowData.correct_answer === 'D' }
+          { text: rowData.option1_A?.toString() || '', isCorrect: rowData.correct_answer === 'A' },
+          { text: rowData.option2_B?.toString() || '', isCorrect: rowData.correct_answer === 'B' },
+          { text: rowData.option3_C?.toString() || '', isCorrect: rowData.correct_answer === 'C' },
+          { text: rowData.option4_D?.toString() || '', isCorrect: rowData.correct_answer === 'D' }
         ],
         answer: rowData.correct_answer?.toString() || '',
         explanation: rowData.explanation?.toString() || ''

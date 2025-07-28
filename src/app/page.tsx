@@ -13,21 +13,25 @@ const QuizCategoriesPage: React.FC = () => {
   const { user } = useUser();
   const [searchTerm, setSearchTerm] = useState<string>('');
 
-  // Filter categories based on search term
+  // Filter and sort categories alphabetically based on search term
   const filteredCategories = useMemo(() => {
-    if (!searchTerm.trim()) {
-      return categories;
+    let filtered = categories;
+    
+    // Filter by search term if provided
+    if (searchTerm.trim()) {
+      filtered = categories.filter((category: ICategory) =>
+        category.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        category.description?.toLowerCase().includes(searchTerm.toLowerCase())
+      );
     }
     
-    return categories.filter((category: ICategory) =>
-      category.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      category.description?.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    // Sort alphabetically by name
+    return filtered.sort((a: ICategory, b: ICategory) => {
+      const nameA = a.name?.toLowerCase() || '';
+      const nameB = b.name?.toLowerCase() || '';
+      return nameA.localeCompare(nameB);
+    });
   }, [categories, searchTerm]);
-
-  
-
-  
 
   return (
     <div className="min-h-screen bg-background transition-colors duration-300">
@@ -37,7 +41,6 @@ const QuizCategoriesPage: React.FC = () => {
             Intellecto Quiz Catalog
           </h1>
           <UserwithDarkMode/>
-          
         </div>
 
         {/* Search Box */}
