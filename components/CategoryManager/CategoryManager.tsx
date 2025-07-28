@@ -318,7 +318,7 @@ export default function CategoryManager() {
                 </p>
                 <div className="flex flex-col gap-2 text-sm text-muted-foreground">
                   <span>Quizzes: {category.quizzes.length}</span>
-                  <span>ID: {category.id.slice(0, 8)}...</span>
+                  <span>ID: {category.id}</span>
                 </div>
               </div>
             ))}

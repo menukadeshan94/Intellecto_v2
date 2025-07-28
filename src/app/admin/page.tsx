@@ -185,7 +185,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ user }) => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.2 }}
-          onClick={() => router.push('/admin/categories')}
+          onClick={() => router.push('/quizzes/create')}
           className="bg-card rounded-xl border border-muted p-6 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 text-left group focus:outline-none focus:ring-2 focus:ring-primary"
           aria-label="Create new quiz"
         >

@@ -1,6 +1,4 @@
-// Enhanced schema.prisma with additional tracking capabilities
-
-// This is your enhanced Prisma schema file
+// Enhanced schema.prisma with creator tracking for quizzes
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
@@ -22,6 +20,7 @@ model User {
   categoryStats CategoryStat[]
   quizAttempts  QuizAttempt[]
   achievements  UserAchievement[]
+  quizzes       Quiz[]         @relation("QuizCreator")
 }
 
 model Category {
@@ -30,13 +29,13 @@ model Category {
   description   String?
   image         String?
   isActive      Boolean        @default(true)
-  difficulty    String?        @default("beginner") // beginner, intermediate, advanced
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
   quizzes       Quiz[]
   categoryStats CategoryStat[]
   quizAttempts  QuizAttempt[]
 }
+
 
 model Quiz {
   id           String        @id @default(auto()) @map("_id") @db.ObjectId
@@ -48,9 +47,11 @@ model Quiz {
   timeLimit    Int?          // in minutes
   passingScore Int?          @default(70) // percentage
   categoryId   String        @db.ObjectId
+  creatorId    String?       @db.ObjectId  // Made optional with ?
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
   category     Category      @relation(fields: [categoryId], references: [id])
+  creator      User?         @relation(fields: [creatorId], references: [id], name: "QuizCreator") // Made optional with ?
   questions    Question[]
   quizAttempts QuizAttempt[]
 }
@@ -96,7 +97,6 @@ model CategoryStat {
   @@unique([userId, categoryId])
 }
 
-// New model for tracking individual quiz attempts
 model QuizAttempt {
   id           String    @id @default(auto()) @map("_id") @db.ObjectId
   userId       String    @db.ObjectId
@@ -120,7 +120,6 @@ model QuizAttempt {
   @@index([categoryId, createdAt])
 }
 
-// Achievement system for gamification
 model Achievement {
   id          String            @id @default(auto()) @map("_id") @db.ObjectId
   name        String            @unique

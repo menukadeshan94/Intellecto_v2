@@ -1,11 +1,10 @@
-// middleware.ts - Optimized version
+// src/middleware.ts - Fixed version with explicit route matching
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
 
-// Move imports to top level for better performance
 const isDev = process.env.NODE_ENV === 'development';
 
-// Define route matchers
+// Define route matchers with more explicit patterns
 const isAdminRoute = createRouteMatcher(['/admin(.*)']);
 const isPublicRoute = createRouteMatcher([
   '/',
@@ -17,19 +16,17 @@ const isPublicRoute = createRouteMatcher([
   '/api/categories',
 ]);
 
-// Simple in-memory cache for user roles (expires after 5 minutes)
+// Simple in-memory cache for user roles
 const roleCache = new Map<string, { role: string; timestamp: number }>();
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
 async function getUserRole(userId: string): Promise<string | null> {
-  // Check cache first
   const cached = roleCache.get(userId);
   if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
     return cached.role;
   }
 
   try {
-    // Only import when needed and cache the import
     const { createClerkClient } = await import('@clerk/nextjs/server');
     
     const clerkClient = createClerkClient({
@@ -39,10 +36,8 @@ async function getUserRole(userId: string): Promise<string | null> {
     const user = await clerkClient.users.getUser(userId);
     const userRole = user.publicMetadata?.role as string || 'user';
     
-    // Cache the result
     roleCache.set(userId, { role: userRole, timestamp: Date.now() });
     
-    // Clean up old cache entries (simple cleanup)
     if (roleCache.size > 1000) {
       const now = Date.now();
       for (const [key, value] of roleCache.entries()) {
@@ -74,15 +69,15 @@ export default clerkMiddleware(async (auth, req) => {
   // Redirect to sign-in if user is not authenticated
   if (!userId) {
     if (isDev) console.log('🚫 No user, redirecting to sign-in');
-    return NextResponse.redirect(new URL('/sign-in', req.url));
+    const signInUrl = new URL('/sign-in', req.url);
+    signInUrl.searchParams.set('redirectUrl', req.url);
+    return NextResponse.redirect(signInUrl);
   }
 
   // Check admin routes
   if (isAdminRoute(req)) {
-    // First try to get role from session claims (fastest)
     let userRole = (sessionClaims?.metadata as any)?.role as string;
     
-    // If not in session claims, check cache or API
     if (!userRole) {
       userRole = await getUserRole(userId) || 'user';
     }
@@ -95,14 +90,16 @@ export default clerkMiddleware(async (auth, req) => {
     if (isDev) console.log('✅ Admin access granted');
   }
 
-  if (isDev) console.log('✅ Middleware allowing access');
+  if (isDev) console.log('✅ Authenticated user, allowing access');
   return NextResponse.next();
 });
 
 export const config = {
   matcher: [
-    // Skip Next.js internals and all static files, unless found in search params
-    '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
+    // More explicit matcher that should catch all routes
+    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+    // Explicitly include categories routes
+    '/categories/:path*',
     // Always run for API routes
     '/(api|trpc)(.*)',
   ],

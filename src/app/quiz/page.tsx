@@ -40,7 +40,7 @@ function page() {
       }
       // If difficulty is set, match it (handle null values)
       return q.difficulty === quizSetup?.difficulty;
-    }).slice(0, quizSetup?.questionCount || 1); // Default to 1 if questionCount is undefined
+    }).slice(0, quizSetup?.questionsCount || 1); // Default to 1 if questionCount is undefined
 
     console.log("Filtered questions:", filteredQuestions);
     console.log("Quiz setup:", quizSetup);
@@ -117,7 +117,8 @@ function page() {
   const handleFinishQuiz = async () => {
     setQuizResponses(responses);
 
-    const score = responses.filter((res) => res.isCorrect).length;
+    const correctAnswers = responses.filter((res) => res.isCorrect).length;
+    const score = Math.round((correctAnswers / responses.length) * 100);
 
     try {
       const res = await axios.post("/api/user/quiz/finish", {
@@ -133,7 +134,7 @@ function page() {
     }
 
     setQuizSetup({
-      questionCount: 1,
+      questionsCount: 1,
       category: null,
       difficulty: null,
     });
@@ -233,7 +234,7 @@ function page() {
               onClick={() => {
                 // Double check to prevent any potential issues
                 if (!activeQuestion?.id) {
-                  const sound = new Audio("../../../public/sounds/error.mp3");
+                  const sound = new Audio("/sounds/error.mp3");
                   sound.play();
                   toast.error("Please select an option to continue");
                   return;
@@ -268,12 +269,12 @@ function page() {
               <div className="w-full bg-muted rounded-full h-1.5 sm:h-2">
                 <div 
                   className="bg-primary h-1.5 sm:h-2 rounded-full transition-all duration-500 ease-out"
-                  style={{ width: `${((currentIndex + 1) / shuffledQuestions.length) * 100}%` }}
+                  style={{ width: `${((currentIndex) / shuffledQuestions.length) * 100}%` }}
                 ></div>
               </div>
               <div className="flex justify-between mt-1.5 sm:mt-2 text-xs sm:text-sm text-muted-foreground">
                 <span>Progress</span>
-                <span>{Math.round(((currentIndex + 1) / shuffledQuestions.length) * 100)}%</span>
+                <span>{Math.round(((currentIndex) / shuffledQuestions.length) * 100)}%</span>
               </div>
             </div>
           </div>

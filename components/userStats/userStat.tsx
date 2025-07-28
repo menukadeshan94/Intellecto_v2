@@ -342,7 +342,7 @@ function EnhancedUserStats({ userStats }: EnhancedUserStatsProps) {
                   <TableHead className="py-4 font-semibold text-foreground">Category</TableHead>
                   <TableHead className="font-semibold text-foreground">Attempts</TableHead>
                   <TableHead className="font-semibold text-foreground">Completed</TableHead>
-                  <TableHead className="font-semibold text-foreground">Success Rate</TableHead>
+                  <TableHead className="font-semibold text-foreground">Completion Rate</TableHead>
                   <TableHead className="font-semibold text-foreground">Average Score</TableHead>
                   <TableHead className="font-semibold text-foreground">Available Quizzes</TableHead>
                   <TableHead className="font-semibold text-foreground">Last Attempt</TableHead>

@@ -1,9 +1,12 @@
-const questions = require("../data/biologyQuestions");
+const questions = require("../data/marketingQuestions");
+
 
 let questionsPrisma: any;
 
 async function seedQuestions() {
   const { PrismaClient } = require("@prisma/client");
+
+ 
 
   questionsPrisma = new PrismaClient();
 
@@ -16,7 +19,7 @@ async function seedQuestions() {
     const createdQuestion = await questionsPrisma.question.create({
       data: {
         text: question.text,
-        quizId: "68667250b7e022936f272c02",
+        quizId: "68866802b81b727f9137e29a",
         answer: correctOption.text,
         difficulty: question.difficulty,
         options: {

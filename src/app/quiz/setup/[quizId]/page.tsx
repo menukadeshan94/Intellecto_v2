@@ -21,9 +21,6 @@ export default function Page() {
   const router = useRouter();
   const { quizSetup, setQuizSetup, selectedQuiz } = useGlobalContext();
   
-  // Local state for category (since it wasn't defined in the original code)
-  const [category, setCategory] = useState<string>('');
-  
   useEffect(() => {
     if (!selectedQuiz) {
       router.push("/"); 
@@ -32,7 +29,7 @@ export default function Page() {
       if (!quizSetup || !quizSetup.difficulty) {
         setQuizSetup((prev: any) => ({
           ...prev,
-          questionCount: prev?.questionCount || 1,
+          questionsCount: prev?.questionsCount || 1,
           difficulty: prev?.difficulty || "unspecified"
         }));
       }
@@ -44,7 +41,7 @@ export default function Page() {
     const maxQuestions = selectedQuiz?.questions?.length || 1;
     const newCount = isNaN(value) || value < 1 ? 1 : Math.min(value, maxQuestions);
 
-    setQuizSetup((prev: any) => ({ ...prev, questionCount: newCount }));
+    setQuizSetup((prev: any) => ({ ...prev, questionsCount: newCount }));
   };
 
   const handleDifficultyChange = (difficulty: string) => {
@@ -69,7 +66,7 @@ export default function Page() {
     }
 
     // Get the specified number of questions
-    const selectedQuestions = filteredQuestions.slice(0, quizSetup?.questionCount || 1);
+    const selectedQuestions = filteredQuestions.slice(0, quizSetup?.questionsCount || 1);
 
     if (selectedQuestions.length > 0) {
       try {
@@ -99,6 +96,19 @@ export default function Page() {
             <p className="text-foreground-600">Configure your quiz preferences</p>
           </div>
 
+          <div>
+            <Label htmlFor="quizTitle" className="text-sm font-medium text-foreground-700 mb-2">
+              Quiz Title
+            </Label>
+            <Input
+              type="text"
+              id="quizTitle"
+              value={selectedQuiz?.title || ""}
+              readOnly
+              className="w-full bg-background cursor-not-allowed"
+            />
+          </div>
+
           {/* Question count */}
           <div className="space-y-2">
             <Label htmlFor="questionCount" className="text-sm font-medium text-foreground-700">
@@ -108,32 +118,11 @@ export default function Page() {
               type="number"
               min={1}
               id="questionCount"
-              value={quizSetup?.questionCount || 1}
+              value={quizSetup?.questionsCount || 1}
               onChange={handleQuestionChange}
               max={selectedQuiz?.questions?.length || 1}
               className="w-full"
             />
-          </div>
-
-          {/* Category select */}
-          <div className="space-y-2">
-            <Label htmlFor="category" className="text-sm font-medium text-foreground">
-              Category
-            </Label>
-            <Select value={category} onValueChange={setCategory}>
-              <SelectTrigger id="category" name="category" className="w-full">
-                <SelectValue placeholder="Select Category" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="general">General Knowledge</SelectItem>
-                <SelectItem value="science">Science</SelectItem>
-                <SelectItem value="sports">Sports</SelectItem>
-                <SelectItem value="history">History</SelectItem>
-                <SelectItem value="geography">Geography</SelectItem>
-                <SelectItem value="entertainment">Entertainment</SelectItem>
-                <SelectItem value="technology">Technology</SelectItem>
-              </SelectContent>
-            </Select>
           </div>
 
           {/* Difficulty select */}
@@ -160,7 +149,7 @@ export default function Page() {
           {/* Submit button */}
           <Button
             onClick={startQuiz}
-            disabled={!category || !selectedQuiz}
+            disabled={!selectedQuiz}
             className="w-full bg-background hover:bg-zinc-700 disabled:bg-gray-400 
             disabled:cursor-not-allowed text-foreground 
             font-medium py-2.5 px-4 rounded-lg transition-colors 
