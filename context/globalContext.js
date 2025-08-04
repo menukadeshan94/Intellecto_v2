@@ -1,4 +1,4 @@
-import exp from 'constants';
+
 import React, { useEffect } from 'react';
 import useCategories from './useCategories';
 import { useUser } from '@clerk/nextjs';
