@@ -5,8 +5,8 @@ interface Props {
   categoryData: ICategoryStats;
 }
 
-import { TrendingUp } from "lucide-react";
-import { Bar, BarChart, CartesianGrid, Rectangle, XAxis } from "recharts";
+//import { TrendingUp } from "lucide-react";
+import { Bar, BarChart, Rectangle, XAxis } from "recharts";
 import {
   Card,
   CardContent,
