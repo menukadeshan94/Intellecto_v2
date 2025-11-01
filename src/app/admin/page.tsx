@@ -13,18 +13,11 @@ import {
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useUser } from '@clerk/nextjs';
 import UserwithDarkMode from '../../../components/UserwithDarkMode/UserwithDarkMode';
 
-interface User {
-  firstName?: string;
-  email?: string;
-}
-
-interface AdminDashboardProps {
-  user?: User;
-}
-
-const AdminDashboard: React.FC<AdminDashboardProps> = ({ user }) => {
+const AdminDashboard: React.FC = () => {
+  const { user } = useUser();
   const [activeView, setActiveView] = useState<string>('overview');
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
   const router = useRouter();
