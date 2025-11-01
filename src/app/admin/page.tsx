@@ -203,12 +203,14 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ user }) => {
         </motion.button>
 
         {/* Manage users */}
-        <motion.button
+        <motion.a
+          href="https://dashboard.clerk.com/apps"
+          target="_blank"
+          rel="noopener noreferrer"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.3 }}
-          onClick={() => router.push('/admin/users')}
-          className="bg-card rounded-xl border border-muted p-6 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 text-left group focus:outline-none focus:ring-2 focus:ring-primary"
+          className="bg-card rounded-xl border border-muted p-6 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 text-left group focus:outline-none focus:ring-2 focus:ring-primary block"
           aria-label="Manage users"
         >
           <div className="flex items-center space-x-4">
@@ -222,7 +224,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ user }) => {
               </p>
             </div>
           </div>
-        </motion.button>
+        </motion.a>
       </div>
     </div>
   );
@@ -277,7 +279,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ user }) => {
             title="User Management"
             description="Manage user accounts and configure their permissions"
             icon={Users}
-            url="/admin/users"
+            url="https://dashboard.clerk.com/apps"
           />
         );
       case 'analytics':
