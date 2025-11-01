@@ -92,11 +92,7 @@ function CategoryBarChart({ categoryData }: Props) {
       </CardContent>
       <CardFooter className="flex-col items-start gap-2 text-sm">
         <div className="flex gap-2 font-semibold text-muted-foreground">
-          {categoryData.lastAttempt ? (
-            <>Attempted on {formatTime(categoryData.lastAttempt)}</>
-          ) : (
-            <>No attempts yet</>
-          )}
+          Attempted on {formatTime(categoryData.lastAttempt)}
         </div>
       </CardFooter>
     </Card>
