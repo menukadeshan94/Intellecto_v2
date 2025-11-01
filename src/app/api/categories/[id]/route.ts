@@ -6,10 +6,10 @@ const prisma = new PrismaClient();
 // DELETE - Delete a category by ID
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params;
+    const { id } = await params;
 
     // Check if category exists
     const existingCategory = await prisma.category.findUnique({
@@ -41,10 +41,10 @@ export async function DELETE(
 // PUT - Update a category by ID
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params;
+    const { id } = await params;
     const { name, description, image } = await request.json();
 
     // Validate input
