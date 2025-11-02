@@ -143,7 +143,7 @@ async function getWeeklyProgress(userId: string, startDate: Date) {
       cursor: {}
     });
 
-    return result.cursor?.firstBatch || [];
+    return (result as any).cursor?.firstBatch || [];
   } catch (error) {
     console.error("Error getting weekly progress:", error);
     // Fallback to simpler query
@@ -258,7 +258,7 @@ async function getMonthlyTrends(userId: string) {
       cursor: {}
     });
 
-    return result.cursor?.firstBatch || [];
+    return (result as any).cursor?.firstBatch || [];
   } catch (error) {
     console.error("Error getting monthly trends:", error);
     return await getMonthlyTrendsFallback(userId, sixMonthsAgo);
