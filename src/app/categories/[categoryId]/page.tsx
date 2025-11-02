@@ -1,6 +1,6 @@
 import React from 'react'
 import QuizCard from '../../../../components/quiz/QuizCard'
-import { currentUser } from '@clerk/nextjs/server' // Use currentUser instead of auth
+import { currentUser } from '@clerk/nextjs/server'
 import prisma from '../../../../utils/connect';
 import UserwithDarkMode from '../../../../components/UserwithDarkMode/UserwithDarkMode';
 import { redirect } from 'next/navigation';
@@ -41,12 +41,34 @@ async function CategoryPage({ params }: PageProps) {
               }
             }
           }
+        },
+        category: {
+          select: {
+            id: true,
+            name: true,
+            description: true,
+            image: true,
+          }
+        },
+        creator: {
+          select: {
+            id: true,
+            clerkId: true,
+            role: true,
+          }
         }
       },
       orderBy: { 
         id: "asc",
       }, 
     });
+
+    // Serialize dates to strings for client components
+    const serializedQuizzes = quizzes.map(quiz => ({
+      ...quiz,
+      createdAt: quiz.createdAt.toISOString(),
+      updatedAt: quiz.updatedAt.toISOString()
+    }));
 
     return (
       <div>
@@ -55,9 +77,9 @@ async function CategoryPage({ params }: PageProps) {
           <UserwithDarkMode />
         </div>
 
-        {quizzes.length > 0 ? (
+        {serializedQuizzes.length > 0 ? (
           <div className="mb-8 grid grid-cols-[repeat(auto-fit,minmax(400px,1fr))] gap-6">
-            {quizzes.map((quiz) => (
+            {serializedQuizzes.map((quiz) => (
               <QuizCard key={quiz.id} quiz={quiz} />
             ))}
           </div>
