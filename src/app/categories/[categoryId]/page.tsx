@@ -111,7 +111,7 @@ async function CategoryPage({ params }: PageProps) {
     return (
       <div>
         <h1>Error loading quizzes</h1>
-        <p>Please try again later.</p>
+        <p>Please try again late.</p>
       </div>
     );
   }
