@@ -4,6 +4,7 @@ import { currentUser } from '@clerk/nextjs/server'
 import prisma from '../../../../utils/connect';
 import UserwithDarkMode from '../../../../components/UserwithDarkMode/UserwithDarkMode';
 import { redirect } from 'next/navigation';
+import { IQuiz } from '../../../../types/types';
 
 interface PageProps {
   params: Promise<{ categoryId: string }>
@@ -97,7 +98,7 @@ async function CategoryPage({ params }: PageProps) {
         {serializedQuizzes.length > 0 ? (
           <div className="mb-8 grid grid-cols-[repeat(auto-fit,minmax(400px,1fr))] gap-6">
             {serializedQuizzes.map((quiz) => (
-              <QuizCard key={quiz.id} quiz={quiz} />
+              <QuizCard key={quiz.id} quiz={quiz as IQuiz} />
             ))}
           </div>
         ) : (
