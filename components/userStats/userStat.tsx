@@ -277,7 +277,7 @@ function EnhancedUserStats({ userStats }: EnhancedUserStatsProps) {
                     .slice(0, 3)
                     .map((stat) => (
                       <div key={stat.id} className="flex justify-between items-center text-sm">
-                        <span className="text-muted-foreground">{stat.category.name}</span>
+                        <span className="text-muted-foreground">{stat.category?.name}</span>
                         <span className="text-muted-foreground">{formatTime(new Date(stat.lastAttempt!))}</span>
                       </div>
                     ))}
@@ -293,7 +293,7 @@ function EnhancedUserStats({ userStats }: EnhancedUserStatsProps) {
                     .slice(0, 3)
                     .map((stat) => (
                       <div key={stat.id} className="flex justify-between items-center text-sm">
-                        <span className="text-muted-foreground">{stat.category.name}</span>
+                        <span className="text-muted-foreground">{stat.category?.name}</span>
                         <span className="font-semibold text-green-600 dark:text-green-400">
                           {stat.averageScore!.toFixed(1)}%
                         </span>
@@ -358,10 +358,10 @@ function EnhancedUserStats({ userStats }: EnhancedUserStatsProps) {
                     <TableRow key={category.id} className="hover:bg-muted/50">
                       <TableCell className="py-4">
                         <div className="font-semibold text-card-foreground">
-                          {category.category.name}
+                          {category.category?.name}
                         </div>
                         <div className="text-sm text-muted-foreground mt-1">
-                          {category.category.description}
+                          {category.category?.description}
                         </div>
                       </TableCell>
                       <TableCell>
@@ -396,7 +396,7 @@ function EnhancedUserStats({ userStats }: EnhancedUserStatsProps) {
                       </TableCell>
                       <TableCell>
                         <span className="text-muted-foreground">
-                          {category.category.quizzes.length}
+                          {category.category?.quizzes?.length || 0}
                         </span>
                       </TableCell>
                       <TableCell>
