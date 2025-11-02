@@ -33,11 +33,19 @@ async function CategoryPage({ params }: PageProps) {
             id: true,
             text: true,
             difficulty: true,
+            points: true,
+            explanation: true,
+            answer: true,
+            quizId: true,
+            createdAt: true,
+            updatedAt: true,
             options: {
               select: {
                 id: true,
                 text: true,
                 isCorrect: true,
+                questionId: true,
+                createdAt: true,
               }
             }
           }
@@ -67,7 +75,16 @@ async function CategoryPage({ params }: PageProps) {
     const serializedQuizzes = quizzes.map(quiz => ({
       ...quiz,
       createdAt: quiz.createdAt.toISOString(),
-      updatedAt: quiz.updatedAt.toISOString()
+      updatedAt: quiz.updatedAt.toISOString(),
+      questions: quiz.questions.map(question => ({
+        ...question,
+        createdAt: question.createdAt.toISOString(),
+        updatedAt: question.updatedAt.toISOString(),
+        options: question.options.map(option => ({
+          ...option,
+          createdAt: option.createdAt.toISOString()
+        }))
+      }))
     }));
 
     return (
